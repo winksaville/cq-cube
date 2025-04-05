@@ -79,6 +79,12 @@ bash miniforge.sh -b -p $HOME/miniforge
 $HOME/miniforge/bin/mamba init
 ```
 
+>Note: An aggravating thing the app in `$HOME/miniforge/bin/wish`, which
+is a symlink to the actual binary, can cause the font to change in change
+for `gitk` and `git gui` to a thin fixed width font and looks terrible
+on a 4K display. The simple fix is to delete or rename the symlink so
+`wish` isn't on the PATH, `rm $HOME/miniforge/bin/wish`.
+
 **Close and restart the terminal to setup your PATH**
 
 ### 2. Clone this repository
