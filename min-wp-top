@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+import cadquery as cq
+from cadquery.vis import show
+
+d = 30
+dcut = 0.8
+htext = 6
+
+res = cq.Workplane().box(d, d, d)
+
+wp = res.faces(">Z") \
+        .workplane(centerOption="CenterOfMass") \
+        .text("Top", htext, -dcut, font="RobotoMono Nerd Font")
+
+wp.export("min-wp-top.stl")
+
+show(wp)

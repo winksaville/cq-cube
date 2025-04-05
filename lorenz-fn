@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+from cadquery.func import *
+from cadquery.vis import show
+
+d = 30
+dcut = 0.8
+htext = 6
+
+
+def make_text(s):
+    return extrude(text(s, htext, "RobotoMono Nerd Font"), (0, 0, dcut)).move(
+        z=d / 2.0 - dcut
+    )
+
+
+res = box(d, d, d).move(z=-d / 2.0)  # move to center box in z
+
+res = res - make_text("TOP")
+res = res - make_text("BOTTOM").move(rx=180)
+res = res - make_text("RIGHT").move(ry=90).move(rx=90)
+res = res - make_text("FRONT").move(rx=90)
+res = res - make_text("LEFT").move(ry=-90).move(rx=90)
+res = res - make_text("BACK").move(rx=-90).move(ry=180)
+
+res.export("lorenz-fn.stl")
+
+show(res, width=500, height=500, xpos=0.3)
