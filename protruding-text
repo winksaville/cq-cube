@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+import cadquery as cq
+from cadquery.vis import show
+
+d = 30         # cube size
+htext = 6      # text height
+hextrude = 0.3 # extrusion height
+
+# Create base cube
+box = cq.Workplane("XY").box(d, d, d)
+show(box)  # Show the cube
+
+if False: # Fails if True
+    # Here I'm trying to create 2D text directly on the >Z face of the cube
+    # and then extrude it upward from the >Z face, but it fails as shown below.
+
+    # Create a workplane on the face I want to have the text appear
+    wp = box.faces(">Z").workplane()
+    show(wp)  # Show the empty workplane
+
+    # Try creating the 2D text fails we, don't get to show(text_2d) below
+    text_2d = wp.text("TOP", htext, 0, font="RobotoMono Nerd Font")
+    # The error message is:
+    #   ./protruding-text 
+    #   Traceback (most recent call last):
+    #     File "/home/wink/data/prgs/3dprinting/cq-cube/./protruding-text", line 22, in <module>
+    #       text_2d = wp.text("TOP", htext, 0, font="RobotoMono Nerd Font")
+    #                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/utils.py", line 71, in wrapped
+    #       return f(*args, **kwargs)
+    #              ^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/cq.py", line 4367, in text
+    #       return self._combineWithBase(r, combine, clean)
+    #              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/cq.py", line 3287, in _combineWithBase
+    #       newS = self._cutFromBase(obj)
+    #              ^^^^^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/cq.py", line 3331, in _cutFromBase
+    #       r = baseSolid.cut(obj)
+    #           ^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/occ_impl/shapes.py", line 4271, in cut
+    #       return tcast(Compound, self._bool_op(self, toCut, cut_op))
+    #                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/occ_impl/shapes.py", line 1241, in _bool_op
+    #       return Shape.cast(op.Shape())
+    #              ^^^^^^^^^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/occ_impl/shapes.py", line 442, in cast
+    #       t = shapetype(obj)
+    #           ^^^^^^^^^^^^^^
+    #     File "/home/wink/miniforge/envs/cq/lib/python3.12/site-packages/cadquery/occ_impl/shapes.py", line 364, in shapetype
+    #       raise ValueError("Null TopoDS_Shape object")
+    #   ValueError: Null TopoDS_Shape object
+    show(text_2d)  # Show the 2D text
+    
+    # Now extrude the 2D text to create 3D text
+    text_3d = text_2d.extrude(hextrude)  # Extrude upward from >Z face
+    show(text_3d)  # 
+
+    # Union the cube and the text
+    res = box.union(text_3d)  # Combine the cube and text
+    show(res)  # Show the result
+else:
+    # This works, but I have to translate the text to the top of the cube
+
+    # Create a workplane on the XY plane
+    wp = cq.Workplane("XY")
+    show(wp)  # Show the empty workplane
+
+    # Create text_2d on the XY plane
+    text_2d = wp.text("TOP", htext, 0, font="RobotoMono Nerd Font")
+    show(text_2d)  # Show the 2D text
+
+    # Extrude the 2D text to create 3D text
+    text_3d = text_2d.extrude(hextrude)
+    show(text_3d)  # Show the 3D text
+
+    # Translate text to top center of cube
+    text_3d_translated = text_3d.translate((0, 0, d / 2))  # center on >Z face
+    show(text_3d_translated)  # Show the translated text
+
+    # Union the cube and the text
+    res = box.union(text_3d_translated)  # Combine the cube and text
+    show(res)  # Show the result

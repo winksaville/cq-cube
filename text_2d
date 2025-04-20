@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+import cadquery as cq
+from cadquery.vis import show
+
+# Create 2D text on the XY plane
+text_2d = cq.Workplane("XY").text("TOP", 6, 0, font="RobotoMono Nerd Font")
+show(text_2d) # Show the 2D text
+
+# Now extrude the 2D text to create 3D text
+text_3d = text_2d.extrude(0.8)
+show(text_3d)  # Show the 3D text
+
