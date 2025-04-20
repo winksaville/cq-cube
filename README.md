@@ -83,7 +83,8 @@ $HOME/miniforge/bin/mamba init
 is a symlink to the actual binary, can cause the font to change in change
 for `gitk` and `git gui` to a thin fixed width font and looks terrible
 on a 4K display. The simple fix is to delete or rename the symlink so
-`wish` isn't on the PATH, `rm $HOME/miniforge/bin/wish`.
+`wish` isn't on the PATH, `rm $HOME/miniforge/bin/wish` and also in the
+environment at `rm $HOME/miniforge/envs/bin/wish`
 
 **Close and restart the terminal to setup your PATH**
 
