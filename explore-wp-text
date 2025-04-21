@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+import argparse
+import cadquery as cq
+import sys
+from cadquery.vis import show
+
+alogorithms = ['1', '2', '3', '4']
+parser = argparse.ArgumentParser(description="Generate 3D cubes with text inscriptions.")
+parser.add_argument("algorithm", choices=alogorithms, type=str, help="Algorithm to use")
+if len(sys.argv) == 1:
+    parser.print_help()
+    parser.exit(1)
+
+args = parser.parse_args()
+
+d = 30         # cube size
+htext = 6      # text height
+distance = 0.3 # cut/extrusion distance
+
+# Create base cube
+box = cq.Workplane("XY").box(d, d, d)
+#show(box, title="box")
+
+if args.algorithm == '1':
+
+    # Create a workplane on the face I want to have the text appear
+    wp = box.faces(">Z").workplane()
+    #show(wp, title="1: wp")
+
+    # Create recessed 3D text on the >Z face of the cube
+    # By default cut=True and combine is irrelevant, all these produce the same result
+    #res = wp.text("TOP", htext, -distance, cut=True, combine=True, font="RobotoMono Nerd Font")
+    #res = wp.text("TOP", htext, -distance, cut=True, combine=False, font="RobotoMono Nerd Font")
+    #res = wp.text("TOP", htext, -distance, cut=True, font="RobotoMono Nerd Font")
+    res = wp.text("TOP", htext, -distance, font="RobotoMono Nerd Font")
+    show(res, title="1: res recessed text")
+
+elif args.algorithm == '2':
+
+    # Create a workplane on the face I want to have the text appear
+    wp = box.faces(">Z").workplane()
+    #show(wp, title="2: wp") # Show the empty workplane
+
+    # Create protuding 3D text on the >Z face in one step, must have cut=False and combine=True
+    res = wp.text("TOP", htext, distance, cut=False, combine=True, font="RobotoMono Nerd Font")
+    show(res, title="2: res protuding text")
+
+elif args.algorithm == '3':
+    # Similar algorithm 4, step by step but using a workplane on the top face of the cube
+
+    # Create a workplane on the face I want to have the text appear
+    wp = box.faces(">Z").workplane()
+    #show(wp, title="3: wp")  # Show the empty workplane
+
+    # Creating 2D text oriented at >Z face of the cube, combine defaults to False and is unnecessary
+    # so both below produce the same text_2d
+    #text_2d = wp.text("TOP", htext, 0, cut=False, combine=False, font="RobotoMono Nerd Font")
+    text_2d = wp.text("TOP", htext, 0, cut=False, font="RobotoMono Nerd Font")
+    show(text_2d, title="3: text_2d")
+    
+    # Now extrude the 2D text to create 3D text, extrude combine defaults to True so combine=False is necessary
+    # to do step by step and see just the text_3d.
+    text_3d = text_2d.extrude(distance, combine=False)
+    show(text_3d, title="3: text_3d")
+
+    # Union the cube and the text
+    res = box.union(text_3d)  # Combine the cube and text
+    show(res, title="3: res")
+
+elif args.algorithm == '4':
+    # Create on the XY plane then translate to the top of the cube
+
+    # Create a workplane on the XY plane
+    wp = cq.Workplane("XY")
+    #show(wp, title="4: wp")  # Show the empty workplane
+
+    # Create text_2d on the XY plane
+    text_2d = wp.text("TOP", htext, 0, font="RobotoMono Nerd Font")
+    show(text_2d, "4: text_2d")
+
+    # Extrude the 2D text to create 3D text
+    text_3d = text_2d.extrude(distance)
+    show(text_3d, title="4: text_3d")
+
+    # Translate text to top center of cube
+    text_3d_translated = text_3d.translate((0, 0, d / 2))  # center on >Z face
+    show(text_3d_translated, title="4: text_3d_translated looks same as text_3d")
+
+    # Union the cube and the text
+    res = box.union(text_3d_translated)  # Combine the cube and text
+    show(res, title="4: res")

@@ -5,17 +5,16 @@ The lorenz-fn and lorenz-wp are by lorenzncode when they answered my question on
 cadquery discusion group [here](https://github.com/CadQuery/cadquery/discussions/1798).
 
 I then created min-wp-top to better aquaint myself with the cadquery library and the
-techniques used in the lorenz-fn and lorenz-wp examples.
+techniques used in the lorenz-fn and lorenz-wp examples.  Also explore-wp-text
+explores various ways to use the cadquery workplane to create text
 
 Before running any of the applications, ensure you have the required dependencies installed
-see, [initial setup](#initial-setup). And then after initial setup be sure the cq environment
-is activated using `conda activate cq`.
+see, [initial setup](#initial-setup). And then after initial setup be sure the
+cq environment is activated using `mamba activate cq` or `conda activate cq`.
 
 - Tested on Linux might work on Windows, and Mac.
 
-## Usage
-
-### Activating the Environment
+## Activating the Environment
 
 Activate the environment using:
 
@@ -27,16 +26,48 @@ or
 conda activate cq
 ```
 
-### Running the Apps
+## Running the Apps
 
 Ensure the environment is activated, see [Activating the Environment](#activating-the-environment).
 
-There are currently 3 apps.
+There are currently 4 apps.
 
-min-wp-top creates a cube with "Top" only on the top face.
+### explore-wp-text
+
+explore-wp-text explores how to use the cadquery workplane to create text
+recessed and protuding text on a cube face
+```sh
+$ ./explore-wp-text -h
+usage: explore-wp-text [-h] {1,2,3,4}
+
+Generate 3D cubes with text inscriptions.
+
+positional arguments:
+  {1,2,3,4}   Algorithm to use
+
+options:
+  -h, --help  show this help message and exit
+```
+
+```sh
+./explore-wp-text 1
+```
+![recessed-top](./recessed-top.png)
+
+```sh
+./explore-wp-text 2
+```
+![protruding-top](./protruding-top.png)
+
+```sh
+
+### min-wp-top
+
 ```sh
 ./min-wp-top
 ```
+
+### lorenz-fn and lorenz-wp
 
 lorenz-fn and lorenz-wp both result in a cube with all faces labled.
 
@@ -50,7 +81,7 @@ lorenz-wp uses the "workplane" style of cadquery and create lorenz-wp.stl
 ./lorenz-wp
 ```
 
-### Cleaning Up
+## Cleaning Up
 
 Remove generated files (`.stl`, `.step`) with:
 
